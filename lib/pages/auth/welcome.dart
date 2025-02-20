@@ -18,18 +18,18 @@ class Welcome extends StatelessWidget {
                 SizedBox(
                   height: 300,
                   width: double.infinity,
-                  child: Image.asset('assets/images/welcome.png'),
+                  child: Image.asset('assets/images/logo.png'),
                 ),
                 const Text(
                   "Welcome!",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
-                    color: Colors.deepPurple,
+                    color: Colors.black,
                   ),
                 ),
                 const Text(
-                  'Create an account and access thousand of cool stuffs',
+                  'spendysync your bugdet tracker',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12,
@@ -82,7 +82,7 @@ class Welcome extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple,
+                          color: Colors.black,
                         ),
                       ),
                     ),

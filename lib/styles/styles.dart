@@ -30,7 +30,7 @@ class Styles {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      backgroundColor: Colors.deepPurple,
+      backgroundColor: Colors.black,
       foregroundColor: Colors.white,
       padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
     );

@@ -75,7 +75,7 @@ class _LoginState extends State<Login> {
                 SizedBox(
                   height: 300,
                   width: double.infinity,
-                  child: Image.asset('assets/images/login_asset.png'),
+                  child: Image.asset('assets/images/login.jpg'),
                 ),
                 const Text("Welcome Back!",
                     style:
@@ -121,7 +121,7 @@ class _LoginState extends State<Login> {
                     // Navigate to Register page (assuming it exists)
                   },
                   child: const Text('Don\'t have an account? Sign up',
-                      style: TextStyle(color: Colors.deepPurple)),
+                      style: TextStyle(color: Colors.black)),
                 ),
               ],
             ),

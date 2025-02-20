@@ -58,13 +58,13 @@ class _RegisterState extends State<Register> {
               key: formKey,
               child: Column(
                 children: [
-                  Image.asset('assets/images/register_asset.png', height: 200),
+                  Image.asset('assets/images/signin.jpg', height: 200),
                   const SizedBox(height: 20),
                   const Text("Sign Up Now!",
                       style: TextStyle(
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple)),
+                          color: Colors.black)),
                   const SizedBox(height: 20),
                   TextFormField(
                     controller: nameController,
@@ -108,7 +108,7 @@ class _RegisterState extends State<Register> {
                     onTap: () => Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => const Login())),
                     child: const Text('Already have an account? Login',
-                        style: TextStyle(color: Colors.deepPurple)),
+                        style: TextStyle(color: Colors.black)),
                   ),
                 ],
               ),
