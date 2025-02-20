@@ -13,13 +13,25 @@ class Budget {
     required this.createdAt,
   });
 
-  factory Budget.fromMap(Map<String, dynamic> map) {
+  // Convert JSON to Budget object
+  factory Budget.fromJson(Map<String, dynamic> json) {
     return Budget(
-      id: map['id'],
-      userId: map['user_id'],
-      category: map['category'],
-      limitAmount: map['limit_amount'].toDouble(),
-      createdAt: DateTime.parse(map['created_at']),
+      id: json['id'] as String,
+      userId: json['user_id'] as String,
+      category: json['category'] as String,
+      limitAmount: (json['limit_amount'] as num).toDouble(),
+      createdAt: DateTime.parse(json['created_at'] as String),
     );
+  }
+
+  // Convert Budget object to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'user_id': userId,
+      'category': category,
+      'limit_amount': limitAmount,
+      'created_at': createdAt.toIso8601String(),
+    };
   }
 }
