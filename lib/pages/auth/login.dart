@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spendysync/pages/auth/register.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:spendysync/models/user_model.dart';
 import 'package:spendysync/pages/home.dart';
@@ -118,7 +119,11 @@ class _LoginState extends State<Login> {
                 const SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
-                    // Navigate to Register page (assuming it exists)
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const Register(),
+                      ),
+                    );
                   },
                   child: const Text('Don\'t have an account? Sign up',
                       style: TextStyle(color: Colors.black)),

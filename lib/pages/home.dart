@@ -4,6 +4,7 @@ import 'package:spendysync/services/expense_service.dart';
 import 'package:spendysync/services/budget_service.dart';
 import 'package:spendysync/models/expense_model.dart';
 import 'package:spendysync/models/budget_model.dart';
+import 'package:spendysync/widgets/sidebar.dart';
 import 'add_expense.dart';
 import 'add_budget.dart';
 
@@ -56,6 +57,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Welcome, ${widget.user.name}!")),
+      drawer: Sidebar(user: widget.user), // Add Sidebar here
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

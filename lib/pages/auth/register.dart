@@ -110,6 +110,29 @@ class _RegisterState extends State<Register> {
                     child: const Text('Already have an account? Login',
                         style: TextStyle(color: Colors.black)),
                   ),
+                  const SizedBox(height: 20), // Added spacing
+                  // Social Media Icons Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.facebook,
+                            color: Colors.blue), // Facebook icon
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.tiktok,
+                            color: Colors.black), // TikTok icon
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.account_circle_rounded,
+                            color: Colors.green), // Custom account icon
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
