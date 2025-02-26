@@ -5,8 +5,6 @@ import 'package:spendysync/services/budget_service.dart';
 import 'package:spendysync/models/expense_model.dart';
 import 'package:spendysync/models/budget_model.dart';
 import 'package:spendysync/widgets/sidebar.dart';
-import 'add_expense.dart';
-import 'add_budget.dart';
 
 class Home extends StatefulWidget {
   final UserModel user;
@@ -41,95 +39,177 @@ class _HomeState extends State<Home> {
     });
   }
 
-  // Delete Expense
-  void _deleteExpense(String id) async {
-    await _expenseService.deleteExpense(id);
-    _loadData();
+  void _showAddExpenseDialog() {
+    TextEditingController categoryController = TextEditingController();
+    TextEditingController amountController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Add Expense"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: categoryController,
+                decoration: const InputDecoration(labelText: "Category"),
+              ),
+              TextField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Amount"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String category = categoryController.text;
+                double amount = double.tryParse(amountController.text) ?? 0.0;
+
+                if (category.isNotEmpty && amount > 0) {
+                  Expense newExpense = Expense(
+                    id: '',
+                    userId: widget.user.userId,
+                    category: category,
+                    amount: amount,
+                    date: DateTime.now(),
+                  );
+                  await _expenseService.addExpense(newExpense);
+                  _loadData();
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  // Delete Budget
-  void _deleteBudget(String id) async {
-    await _budgetService.deleteBudget(id);
-    _loadData();
+  void _showAddBudgetDialog() {
+    TextEditingController categoryController = TextEditingController();
+    TextEditingController limitController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Add Budget"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: categoryController,
+                decoration: const InputDecoration(labelText: "Category"),
+              ),
+              TextField(
+                controller: limitController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Limit Amount"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String category = categoryController.text;
+                double limitAmount =
+                    double.tryParse(limitController.text) ?? 0.0;
+
+                if (category.isNotEmpty && limitAmount > 0) {
+                  Budget newBudget = Budget(
+                    id: '',
+                    userId: widget.user.userId,
+                    category: category,
+                    limitAmount: limitAmount,
+                    createdAt: DateTime.now(),
+                  );
+                  await _budgetService.addBudget(newBudget);
+                  _loadData();
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text("Add"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Welcome, ${widget.user.name}!")),
-      drawer: Sidebar(user: widget.user), // Add Sidebar here
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: "addExpense",
-            child: Icon(Icons.add),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => AddExpense(user: widget.user)),
-              );
-              _loadData();
-            },
-          ),
-          SizedBox(height: 10),
-          FloatingActionButton(
-            heroTag: "addBudget",
-            backgroundColor: Colors.green,
-            child: Icon(Icons.attach_money),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => AddBudget(user: widget.user)),
-              );
-              _loadData();
-            },
-          ),
-        ],
-      ),
+      drawer: Sidebar(user: widget.user),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Recent Expenses",
+            const Text("Recent Expenses",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Expanded(
               child: ListView.builder(
                 itemCount: expenses.length,
                 itemBuilder: (context, index) {
                   return ListTile(
+                    leading: const Icon(Icons.money),
                     title: Text(expenses[index].category),
                     subtitle:
                         Text("₱${expenses[index].amount.toStringAsFixed(2)}"),
                     trailing: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteExpense(expenses[index].id),
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () async {
+                        await _expenseService.deleteExpense(expenses[index].id);
+                        _loadData();
+                      },
                     ),
                   );
                 },
               ),
             ),
-            SizedBox(height: 20),
-            Text("Budgets",
+            ElevatedButton(
+              onPressed: _showAddExpenseDialog,
+              child: const Text("Add Expense"),
+            ),
+            const SizedBox(height: 20),
+            const Text("Budgets",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Expanded(
               child: ListView.builder(
                 itemCount: budgets.length,
                 itemBuilder: (context, index) {
                   return ListTile(
+                    leading: const Icon(Icons.pie_chart),
                     title: Text(budgets[index].category),
                     subtitle: Text(
                         "Limit: ₱${budgets[index].limitAmount.toStringAsFixed(2)}"),
                     trailing: IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: () => _deleteBudget(budgets[index].id),
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () async {
+                        await _budgetService.deleteBudget(budgets[index].id);
+                        _loadData();
+                      },
                     ),
                   );
                 },
               ),
+            ),
+            ElevatedButton(
+              onPressed: _showAddBudgetDialog,
+              child: const Text("Add Budget"),
             ),
           ],
         ),

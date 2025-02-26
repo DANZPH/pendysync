@@ -1,81 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:spendysync/models/user_model.dart';
-import 'package:spendysync/pages/home.dart';
-import 'package:spendysync/pages/expenses.dart';
-import 'package:spendysync/pages/budgets.dart';
-import 'package:spendysync/pages/reports.dart';
-import 'package:spendysync/pages/settings.dart';
-import 'package:spendysync/pages/auth/welcome.dart';
+import 'package:spendysync/pages/auth/login.dart';
+import 'package:spendysync/services/auth_service.dart';
 
 class Sidebar extends StatelessWidget {
   final UserModel user;
 
   const Sidebar({super.key, required this.user});
 
+  void _logout(BuildContext context) async {
+    await AuthService().logout(); // Call logout function
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const Login()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: Column(
         children: [
           UserAccountsDrawerHeader(
-            accountName: Text(user.name),
+            accountName: Text(user.name ?? "User"),
             accountEmail: Text(user.email),
-            currentAccountPicture: CircleAvatar(
+            currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.white,
-              child: Text(
-                user.name.isNotEmpty ? user.name[0].toUpperCase() : "?",
-                style: TextStyle(fontSize: 24.0, color: Colors.blue),
-              ),
+              child: Icon(Icons.person, size: 40, color: Colors.black),
             ),
           ),
-          _buildDrawerItem(Icons.home, "Home", () {
-            Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (_) => Home(user: user)));
-          }),
-          _buildDrawerItem(Icons.attach_money, "Expenses", () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (_) => ExpensesPage(user: user)));
-          }),
-          _buildDrawerItem(Icons.account_balance_wallet, "Budgets", () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (_) => BudgetsPage(user: user)));
-          }),
-          _buildDrawerItem(Icons.bar_chart, "Reports", () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (_) => ReportsPage(user: user)));
-          }),
-          _buildDrawerItem(Icons.settings, "Settings", () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (_) => SettingsPage(user: user)));
-          }),
-          Divider(),
-          _buildDrawerItem(Icons.exit_to_app, "Logout", () async {
-            await _logout(context);
-          }),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text("Home"),
+            onTap: () => Navigator.pop(context),
+          ),
+          ListTile(
+            leading: const Icon(Icons.attach_money),
+            title: const Text("Expenses"),
+            onTap: () {
+              // Navigate to expenses page if needed
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.pie_chart),
+            title: const Text("Budgets"),
+            onTap: () {
+              // Navigate to budgets page if needed
+            },
+          ),
+          const Spacer(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text("Logout", style: TextStyle(color: Colors.red)),
+            onTap: () => _logout(context),
+          ),
+          const SizedBox(height: 20),
         ],
       ),
-    );
-  }
-
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blue),
-      title: Text(title, style: TextStyle(fontSize: 16.0)),
-      onTap: onTap,
-    );
-  }
-
-  Future<void> _logout(BuildContext context) async {
-    final supabase = Supabase.instance.client;
-
-    await supabase.auth.signOut();
-
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const Welcome()),
-      (route) => false,
     );
   }
 }
