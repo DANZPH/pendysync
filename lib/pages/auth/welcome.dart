@@ -64,7 +64,7 @@ class Welcome extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      'Don\'t have an account?',
+                      'Don\'t have an Account?',
                       style: TextStyle(
                         fontSize: 12,
                       ),
