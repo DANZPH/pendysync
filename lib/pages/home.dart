@@ -39,15 +39,17 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void _showAddExpenseDialog() {
-    TextEditingController categoryController = TextEditingController();
-    TextEditingController amountController = TextEditingController();
+  void _showExpenseDialog({Expense? expense}) {
+    TextEditingController categoryController =
+        TextEditingController(text: expense?.category ?? '');
+    TextEditingController amountController =
+        TextEditingController(text: expense?.amount.toString() ?? '');
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Add Expense"),
+          title: Text(expense == null ? "Add Expense" : "Edit Expense"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -73,19 +75,32 @@ class _HomeState extends State<Home> {
                 double amount = double.tryParse(amountController.text) ?? 0.0;
 
                 if (category.isNotEmpty && amount > 0) {
-                  Expense newExpense = Expense(
-                    id: '',
-                    userId: widget.user.userId,
-                    category: category,
-                    amount: amount,
-                    date: DateTime.now(),
-                  );
-                  await _expenseService.addExpense(newExpense);
+                  if (expense == null) {
+                    // Add new expense
+                    Expense newExpense = Expense(
+                      id: '',
+                      userId: widget.user.userId,
+                      category: category,
+                      amount: amount,
+                      date: DateTime.now(),
+                    );
+                    await _expenseService.addExpense(newExpense);
+                  } else {
+                    // Update existing expense
+                    Expense updatedExpense = Expense(
+                      id: expense.id,
+                      userId: expense.userId,
+                      category: category,
+                      amount: amount,
+                      date: expense.date,
+                    );
+                    await _expenseService.updateExpense(updatedExpense);
+                  }
                   _loadData();
                   Navigator.pop(context);
                 }
               },
-              child: const Text("Add"),
+              child: Text(expense == null ? "Add" : "Update"),
             ),
           ],
         );
@@ -93,15 +108,17 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _showAddBudgetDialog() {
-    TextEditingController categoryController = TextEditingController();
-    TextEditingController limitController = TextEditingController();
+  void _showBudgetDialog({Budget? budget}) {
+    TextEditingController categoryController =
+        TextEditingController(text: budget?.category ?? '');
+    TextEditingController limitController =
+        TextEditingController(text: budget?.limitAmount.toString() ?? '');
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Add Budget"),
+          title: Text(budget == null ? "Add Budget" : "Edit Budget"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -128,19 +145,32 @@ class _HomeState extends State<Home> {
                     double.tryParse(limitController.text) ?? 0.0;
 
                 if (category.isNotEmpty && limitAmount > 0) {
-                  Budget newBudget = Budget(
-                    id: '',
-                    userId: widget.user.userId,
-                    category: category,
-                    limitAmount: limitAmount,
-                    createdAt: DateTime.now(),
-                  );
-                  await _budgetService.addBudget(newBudget);
+                  if (budget == null) {
+                    // Add new budget
+                    Budget newBudget = Budget(
+                      id: '',
+                      userId: widget.user.userId,
+                      category: category,
+                      limitAmount: limitAmount,
+                      createdAt: DateTime.now(),
+                    );
+                    await _budgetService.addBudget(newBudget);
+                  } else {
+                    // Update existing budget
+                    Budget updatedBudget = Budget(
+                      id: budget.id,
+                      userId: budget.userId,
+                      category: category,
+                      limitAmount: limitAmount,
+                      createdAt: budget.createdAt,
+                    );
+                    await _budgetService.updateBudget(updatedBudget);
+                  }
                   _loadData();
                   Navigator.pop(context);
                 }
               },
-              child: const Text("Add"),
+              child: Text(budget == null ? "Add" : "Update"),
             ),
           ],
         );
@@ -169,19 +199,30 @@ class _HomeState extends State<Home> {
                     title: Text(expenses[index].category),
                     subtitle:
                         Text("₱${expenses[index].amount.toStringAsFixed(2)}"),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () async {
-                        await _expenseService.deleteExpense(expenses[index].id);
-                        _loadData();
-                      },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () =>
+                              _showExpenseDialog(expense: expenses[index]),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () async {
+                            await _expenseService
+                                .deleteExpense(expenses[index].id);
+                            _loadData();
+                          },
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
             ),
             ElevatedButton(
-              onPressed: _showAddExpenseDialog,
+              onPressed: () => _showExpenseDialog(),
               child: const Text("Add Expense"),
             ),
             const SizedBox(height: 20),
@@ -196,19 +237,30 @@ class _HomeState extends State<Home> {
                     title: Text(budgets[index].category),
                     subtitle: Text(
                         "Limit: ₱${budgets[index].limitAmount.toStringAsFixed(2)}"),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.red),
-                      onPressed: () async {
-                        await _budgetService.deleteBudget(budgets[index].id);
-                        _loadData();
-                      },
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () =>
+                              _showBudgetDialog(budget: budgets[index]),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () async {
+                            await _budgetService
+                                .deleteBudget(budgets[index].id);
+                            _loadData();
+                          },
+                        ),
+                      ],
                     ),
                   );
                 },
               ),
             ),
             ElevatedButton(
-              onPressed: _showAddBudgetDialog,
+              onPressed: () => _showBudgetDialog(),
               child: const Text("Add Budget"),
             ),
           ],
